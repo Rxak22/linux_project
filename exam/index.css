@@ -1,0 +1,46 @@
+*{
+    margin: 0;
+    box-sizing: border-box;
+    padding: 0;
+}
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+form{
+    width: 80%;
+    background-color: rgba(12, 12, 12, 0.719);
+    height: 100vh;
+    padding: 2rem;
+    
+}
+h3{
+    margin-top: 2rem;
+}
+form section{
+    color: aliceblue;
+}
+form section .items input[type="radio"]{
+    margin-top: 1rem;
+    margin-left: 3rem;
+
+}
+legend{
+    color: red;
+    font-size: larger;
+}
+fieldset{
+    border-radius: 20px;
+    padding: 1rem;
+}
+.btnSub{
+    padding: 0.5rem;
+    background-color: green;
+    color: aliceblue;
+    outline: none;
+    border-radius: 10px;
+    border: none;
+    margin-left: 5rem;
+    margin-top: 20px;
+}
