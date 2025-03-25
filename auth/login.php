@@ -4,7 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
-    <title>Register</title>
+
+    <!-- toast  -->
+        <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+    <!-- toast -->
+     <link rel="icon" href="https://rupp.edu.kh/images/rupp-logo.png">
+     <title>RUPP | Login</title>
     <style>
         body {
             background-image: url('https://www.rupp.edu.kh/news/news_image/59.jpg');
@@ -69,7 +76,7 @@
             header('Location: ../index.php');
             exit;
         } else {
-            echo 'Invalid email or password';
+            echo '<span class="text-center text-danger position-absolute translate-middle-y top-0 mt-5 bg-light p-2 rounded-2">Invalid email or password</span>';
         }
     }
 ?>

@@ -23,7 +23,8 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <title>Student Result</title>
+    <link rel="icon" href="https://rupp.edu.kh/images/rupp-logo.png">
+     <title>RUPP | Student Result</title>
     <style>
        .btn-back:hover {
          background-color: black;

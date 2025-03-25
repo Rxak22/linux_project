@@ -13,7 +13,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <<link rel="icon" href="https://rupp.edu.kh/images/rupp-logo.pn">
+    <title>RUPP | Question</title>
     <link rel="stylesheet" href="index.css">
 </head>
 <style>

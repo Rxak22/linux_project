@@ -14,7 +14,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css">
-    <title>Document</title>
+    <link rel="icon" href="https://rupp.edu.kh/images/rupp-logo.pn">
+     <title>RUPP | Home</title>
     <style>
         body {
             margin: 0;
@@ -95,6 +96,9 @@
         <a href="index.php"><i class="bi bi-house-door me-2"></i>Home</a>
         <a href="./exam/"><i class="bi bi-pencil-square me-2"></i>Let Exam</a>
         <a href="./list/"><i class="bi bi-file-earmark-bar-graph me-2"></i>See Result</a>
+        <a href="./admin/new_user.php"><i class="bi bi-person-plus me-2"></i>New User</a>
+        <a href="./admin/list_student.php"><i class="bi bi-list-ul me-2"></i>List Student Result</a>
+        <a href="./exam/create_exam.php"><i class="bi bi-file-earmark-plus me-2"></i>Create Exam</a>
     </div>
     <!-- end sidebar -->
     <div class="content">
