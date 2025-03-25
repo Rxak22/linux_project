@@ -2,47 +2,47 @@
     session_start();
     require_once('../Connect.php');
     if (!isset($_SESSION['user'])) {
-        header('Location: ./auth/login.php');
+        header('Location: ../auth/login.php');
         exit;
     }
     $username = $_SESSION['user']["name"]; // Assuming the username is stored in the session
 
-    // for new user section
-    $sql = "SELECT id, name, gender, email, role FROM users WHERE role = 'Administrator' OR role = 'Teacher'";
+    // select all user section
+    $sql = "SELECT id, name, gender, class, email, role FROM users LIMIT 10";
     $rs = mysqli_query($conn, $sql);
 
-    $students = [];
+    $users = [];
     if ($rs) {
         while ($row = $rs->fetch_assoc()) {
-            $students[] = $row;
+            $users[] = $row;
         }
     } else {
-        $students = null;
+        $users = null;
     }
 
-    // insert new user into database
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $sql = "INSERT INTO users VALUES (null  , '{$_POST["name"]}', 
-                                        '{$_POST["gender"]}', 
-                                        '{$_POST["class"]}', 
-                                        '{$_POST["email"]}', 
-                                        '{$_POST["password"]}',
-                                        '{$_POST["role"]}'
-                                        )";
+    // insert user into database
+    if (isset($_POST["submit"])) {
+        $sql = "UPDATE users SET name = '{$_POST["name"]}',
+                                         gender = '{$_POST["gender"]}', 
+                                         class = '{$_POST["class"]}', 
+                                         email = '{$_POST["email"]}', 
+                                         role = '{$_POST["role"]}' 
+                                         WHERE id = '{$_POST["id"]}'";
 
         if ($conn->query($sql) === TRUE) {
-            $user_id = $conn->insert_id; // Get the ID of the newly inserted user
-            $_SESSION["user"] = [
-                "id" => $user_id,
-                "name" => $_POST["name"],
-                "gender" => $_POST["gender"],
-                "class" => $_POST["class"],
-                "email" => $_POST["email"],
-                "role" => $_POST["role"],
-                "is_examed" => true
-            ];
+            header('Location: ./manage_user.php');
+            exit;
+        } else {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+        }
+    }
 
-            header('Location: ./new_user.php');
+    // delete user
+    if (isset($_POST["delete"])) {
+        $sql = "DELETE FROM users WHERE id = '{$_POST["id"]}'";
+
+        if ($conn->query($sql) === TRUE) {
+            header('Location: ./manage_user.php');
             exit;
         } else {
             echo "Error: " . $sql . "<br>" . $conn->error;
@@ -59,8 +59,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css">
-    <link rel="icon" href="https://rupp.edu.kh/images/rupp-logo.pn">
-     <title>RUPP | Home</title>
+    <link rel="icon" href="https://rupp.edu.kh/images/rupp-logo.png">
+    <title>RUPP | Home</title>
     <style>
         body {
             margin: 0;
@@ -140,7 +140,7 @@
                             <i class="bi bi-person-circle me-2"></i><?php echo $username; ?>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="./auth/logout.php">Logout</a></li>
+                            <li><a class="dropdown-item" href="../auth/logout.php">Logout</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -167,31 +167,39 @@
     <!-- end sidebar -->
     <div class="content d-flex">
         <div class="student_list pe-2" style="color: #D4D8DD">
-        <h2 class="text-center">Admin & Teacher List</h2>
+        <h2 class="text-center">All users</h2>
             <table class="table table-dark table-striped table-hover mt-4">
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
                         <th>Gender</th>
+                        <th>Class</th>
                         <th>Email</th>
                         <th>Role</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if ($students) { ?>
-                        <?php foreach ($students as $student) { ?>
-                        <tr>
-                            <td><?php echo $student['id']; ?></td>
-                            <td><?php echo $student['name']; ?></td>
-                            <td><?php echo $student['gender']; ?></td>
-                            <td><?php echo $student['email']; ?></td>
-                            <td><?php echo $student['role']; ?></td>
+                    <?php if ($users) { ?>
+                        <?php foreach ($users as $user) { ?>
+                        <tr class="user-row" data-id="<?php echo $user['id']; ?>" data-name="<?php echo $user['name']; ?>" data-gender="<?php echo $user['gender']; ?>" data-class="<?php echo $user['class']; ?>" data-email="<?php echo $user['email']; ?>" data-role="<?php echo $user['role']; ?>">
+                            <td><?php echo $user['id']; ?></td>
+                            <td><?php echo $user['name']; ?></td>
+                            <td><?php echo $user['gender']; ?></td>
+                            <td><?php echo $user['class']; ?></td>
+                            <td><?php echo $user['email']; ?></td>
+                            <td><?php 
+                                if ($user['id'] == $_SESSION["user"]["id"]){
+                                    echo $user['role']. " (You)";
+                                }else {
+                                    echo $user['role'];
+                                }
+                            ?></td>
                         </tr>
                         <?php } ?>
                     <?php } else { ?>
                     <tr>
-                        <td colspan="5" class="text-center">No students found</td>
+                        <td colspan="6" class="text-center">No users found</td>
                     </tr>
                     <?php } ?>
                 </tbody>
@@ -200,10 +208,11 @@
         <div class="divider"></div>
         <div class="new_user" style="color: #D4D8DD">
         <h2 class="text-center">Register</h2>
-        <form action="" method="POST">
+        <form id="user-form" action="" method="POST">
+            <input type="hidden" name="id" id="id">
             <div class="mb-3">
                 <label for="name" class="form-label">Name</label>
-                <input type="text" class="form-control placeholder" id="name" name="name" placeholder="Enter your name" required>
+                <input type="text" class="form-control " id="name" name="name" placeholder="Enter your name" required>
             </div>
             <div class="mb-3">
                 <label for="gender" class="form-label">Gender</label> <br>
@@ -216,8 +225,14 @@
                     Female
                   </label>
             </div>
-            <!-- hidden class value -->
-             <input type="hidden" name="class" id="class" value="Non">
+           <div class="mb-3">
+                <label for="class" class="form-label">Class</label>
+                <input type="text" class="form-control" id="class" name="class" placeholder="Enter your class" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+            </div>
             <div class="mb-3">
                 <label for="role" class="form-label">Role</label> <br>
                 <label class="form-check-label">
@@ -228,21 +243,49 @@
                     <input type="radio" class="form-check-input" name="role" id="admin" value="Administrator">
                     Admin
                   </label>
+                  <label class="form-check-label">
+                    <input type="radio" class="form-check-input" name="role" id="student" value="Student">
+                    Student
+                  </label>
             </div>
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control placeholder" id="email" name="email" placeholder="Enter your email" required>
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control placeholder" id="password" name="password" placeholder="Enter your password" required>
-            </div>
-            <div class="card-footer text-center d-flex justify-content-end align-items-center pt-2">
-                <button type="submit" name="submit" class="btn btn-info">Add</button>
+            <div class="card-footer text-center d-flex justify-content-between align-items-center pt-2">
+                <button type="submit" name="delete" class="btn btn-danger">Delete</button>
+                <button type="submit" name="submit" class="btn btn-info">Done</button>
             </div>
         </form>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.querySelectorAll('.user-row').forEach(row => {
+            row.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const name = this.getAttribute('data-name');
+                const gender = this.getAttribute('data-gender');
+                const classValue = this.getAttribute('data-class');
+                const email = this.getAttribute('data-email');
+                const role = this.getAttribute('data-role');
+
+                document.getElementById('id').value = id;
+                document.getElementById('name').value = name;
+                document.getElementById('class').value = classValue;
+                document.getElementById('email').value = email;
+
+                if (gender === 'Male') {
+                    document.getElementById('male').checked = true;
+                } else {
+                    document.getElementById('female').checked = true;
+                }
+
+                if (role === 'Teacher') {
+                    document.getElementById('teacher').checked = true;
+                } else if (role === 'Administrator') {
+                    document.getElementById('admin').checked = true;
+                } else {
+                    document.getElementById('student').checked = true;
+                }
+            });
+        });
+    </script>
 </body>
 </html>

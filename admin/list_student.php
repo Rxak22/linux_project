@@ -78,20 +78,20 @@ $conn->close();
                         <td><?php echo $student['end_exam_time']; ?></td>
                         <td>
                         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#viewModal" data-id="<?php echo "0000". $student['student_id']; ?>" data-name="<?php echo $student['name']; ?>" data-class="<?php echo $student['class']; ?>" data-score="<?php echo $student['score']; ?>" data-grade="<?php echo $student['grade']; ?>" data-start="<?php echo $student['start_exam_time']; ?>" data-end="<?php echo $student['end_exam_time']; ?>">View</button>
-                        <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#viewModal" data-id="<?php echo "0000". $student['student_id']; ?>" data-name="<?php echo $student['name']; ?>" data-class="<?php echo $student['class']; ?>" data-score="<?php echo $student['score']; ?>" data-grade="<?php echo $student['grade']; ?>">Edit</button>
+                        <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#editModal" data-id="<?php echo "0000". $student['student_id']; ?>" data-name="<?php echo $student['name']; ?>" data-class="<?php echo $student['class']; ?>" data-score="<?php echo $student['score']; ?>" data-grade="<?php echo $student['grade']; ?>">Edit</button>
                         </td>
                     </tr>
                     <?php } ?>
                 <?php } else { ?>
                 <tr>
-                    <td colspan="6" class="text-center">No results found</td>
+                    <td colspan="8" class="text-center">No results found</td>
                 </tr>
                 <?php } ?>
             </tbody>
         </table>
     </div>
 
-    <!-- Modal -->
+    <!-- View Modal -->
     <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content bg-dark">
@@ -110,6 +110,43 @@ $conn->close();
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark">
+                <div class="modal-header" style="color: #D4D8DD;">
+                    <h5 class="modal-title" id="editModalLabel">Edit Student</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="color: #D4D8DD;">
+                    <form id="edit-form" action="edit_student.php" method="POST">
+                        <input type="hidden" id="edit-student-id" name="student_id">
+                        <div class="mb-3">
+                            <label for="edit-student-name" class="form-label">Student Name</label>
+                            <input type="text" class="form-control" id="edit-student-name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-student-class" class="form-label">Class</label>
+                            <input type="text" class="form-control" id="edit-student-class" name="class" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-student-score" class="form-label">Score</label>
+                            <input type="number" class="form-control" id="edit-student-score" name="score" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-student-grade" class="form-label">Grade</label>
+                            <input type="text" class="form-control" id="edit-student-grade" name="grade" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -143,6 +180,28 @@ $conn->close();
             modalStudentGrade.textContent = studentGrade;
             modalStartTime.textContent = startTime;
             modalEndTime.textContent = endTime;
+        });
+
+        var editModal = document.getElementById('editModal');
+        editModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var studentId = button.getAttribute('data-id');
+            var studentName = button.getAttribute('data-name');
+            var studentClass = button.getAttribute('data-class');
+            var studentScore = button.getAttribute('data-score');
+            var studentGrade = button.getAttribute('data-grade');
+
+            var editStudentId = editModal.querySelector('#edit-student-id');
+            var editStudentName = editModal.querySelector('#edit-student-name');
+            var editStudentClass = editModal.querySelector('#edit-student-class');
+            var editStudentScore = editModal.querySelector('#edit-student-score');
+            var editStudentGrade = editModal.querySelector('#edit-student-grade');
+
+            editStudentId.value = studentId;
+            editStudentName.value = studentName;
+            editStudentClass.value = studentClass;
+            editStudentScore.value = studentScore;
+            editStudentGrade.value = studentGrade;
         });
     </script>
 </body>
