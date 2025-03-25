@@ -78,7 +78,7 @@ $conn->close();
                         <td><?php echo $student['end_exam_time']; ?></td>
                         <td>
                         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#viewModal" data-id="<?php echo "0000". $student['student_id']; ?>" data-name="<?php echo $student['name']; ?>" data-class="<?php echo $student['class']; ?>" data-score="<?php echo $student['score']; ?>" data-grade="<?php echo $student['grade']; ?>" data-start="<?php echo $student['start_exam_time']; ?>" data-end="<?php echo $student['end_exam_time']; ?>">View</button>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#viewModal" data-id="<?php echo "0000". $student['student_id']; ?>" data-name="<?php echo $student['name']; ?>" data-class="<?php echo $student['class']; ?>" data-score="<?php echo $student['score']; ?>" data-grade="<?php echo $student['grade']; ?>">Edit</button>
+                        <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#viewModal" data-id="<?php echo "0000". $student['student_id']; ?>" data-name="<?php echo $student['name']; ?>" data-class="<?php echo $student['class']; ?>" data-score="<?php echo $student['score']; ?>" data-grade="<?php echo $student['grade']; ?>">Edit</button>
                         </td>
                     </tr>
                     <?php } ?>

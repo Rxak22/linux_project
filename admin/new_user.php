@@ -151,12 +151,18 @@
 
     <!-- start sidebar -->
     <div class="sidebar z-0">
-        <a href="../index.php"><i class="bi bi-house-door me-2"></i>Home</a>
-        <a href="../exam/"><i class="bi bi-pencil-square me-2"></i>Let Exam</a>
-        <a href="../list/"><i class="bi bi-file-earmark-bar-graph me-2"></i>See Result</a>
-        <a href="new_user.php"><i class="bi bi-person-plus me-2"></i>New User</a>
-        <a href="list_student.php"><i class="bi bi-list-ul me-2"></i>List Student Result</a>
-        <a href="./exam/create_exam.php"><i class="bi bi-file-earmark-plus me-2"></i>Create Exam</a>
+        <!-- for admin access -->
+        <?php
+            if($_SESSION['user']['role'] == 'Administrator') {
+        ?>
+            <a href="../index.php"><i class="bi bi-house-door me-2"></i>Home</a>
+            <a href="new_user.php"><i class="bi bi-person-plus me-2"></i>New User</a>
+            <a href="new_user.php"><i class="bi bi-person-plus me-2"></i>Manage All User</a>
+            <a href="list_student.php"><i class="bi bi-list-ul me-2"></i>List Student Result</a>
+            <a href="create_exam.php"><i class="bi bi-file-earmark-plus me-2"></i>Create Exam</a>
+        <?php
+            }
+        ?>
     </div>
     <!-- end sidebar -->
     <div class="content d-flex">
