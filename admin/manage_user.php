@@ -155,7 +155,7 @@
         <?php
             if($_SESSION['user']['role'] == 'Administrator') {
         ?>
-            <a href="../index.php"><i class="bi bi-house-door me-2"></i>Home</a>
+            <a href="../index.php"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
             <a href="new_user.php"><i class="bi bi-person-plus me-2"></i>New User</a>
             <a href="manage_user.php"><i class="bi bi-people me-2"></i>Manage All User</a>
             <a href="list_student.php"><i class="bi bi-list-ul me-2"></i>List Student Result</a>

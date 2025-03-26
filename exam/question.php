@@ -1,10 +1,26 @@
 <?php
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $start_time = $_POST['start_time'];
-    }
-    // change user is_examed session t ofalse
-    session_start();
-    $_SESSION["user"]["is_examed"] = false;
+session_start();
+require_once('../Connect.php');
+
+// Check if the user is logged in
+if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 'Student') {
+    header('Location: ../auth/login.php');
+    exit;
+}
+
+// Fetch questions from the database
+$sql = "SELECT id, question, option_a, option_b, option_c, option_d FROM questions WHERE exam_id = (SELECT MAX(id) FROM create_exam)";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    $questions = $result->fetch_all(MYSQLI_ASSOC);
+} else {
+    echo "No questions found for this exam.";
+    exit;
+}
+
+// Initialize start time
+$start_time = date('Y-m-d H:i:s');
 ?>
 
 <!DOCTYPE html>
@@ -13,7 +29,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <<link rel="icon" href="https://rupp.edu.kh/images/rupp-logo.pn">
+    <link rel="icon" href="https://rupp.edu.kh/images/rupp-logo.png">
     <title>RUPP | Question</title>
     <link rel="stylesheet" href="index.css">
 </head>
@@ -25,99 +41,94 @@
     * {
         color: #D4D8DD;
     }
+
+    .items {
+        margin-bottom: 20px;
+    }
+
+    .options {
+        display: flex;
+        gap: 20px;
+        margin-top: 10px;
+    }
+
+    .options label {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .btnSub {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #1A73E8;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .btnSub:hover {
+        background-color: #1558B0;
+    }
 </style>
 
 <body>
     <form action="action.php" method="POST" onsubmit="return validateForm()">
         <fieldset>
-            <legend>Linux quizzes</legend>
+            <legend>Linux Quizzes</legend>
 
-            <!-- hide -->
-            <input type="hidden" name="start_time" id="start_time" value="<?php echo $start_time; ?>"> 
+            <!-- Hidden fields for start and end time -->
+            <input type="hidden" name="start_time" id="start_time" value="<?php echo $start_time; ?>">
             <input type="hidden" name="end_time" id="end_time">
-            <!-- hide -->
+
+            <!-- Dynamically load questions -->
             <section>
+                <?php foreach ($questions as $index => $question) { ?>
+                    <div class="items">
+                        <h3>
+                            <?php echo ($index + 1) . '. ' . htmlspecialchars($question['question']); ?>
+                        </h3>
 
-                <div class="items">
-                    <h3>
-                        1. Which command is used to list all files and directories in Linux?
-                    </h3>
-
-                    <input type="radio" name="q1" value="ls"> a) ls
-                    <input type="radio" name="q1" value="dir"> b) dir
-                    <input type="radio" name="q1" value="list"> c) list
-                    <input type="radio" name="q1" value="show"> d) show
-
-                </div>
-                <div class="items">
-                    <h3>
-                        2. What does the cd command do?
-                    </h3>
-
-                    <input type="radio" name="q2" value=" Copies a file" id="">a) Copies a file
-                    <input type="radio" name="q2" value="Deletes a file" id="">b) Deletes a file
-                    <input type="radio" name="q2" value="Changes the current directory" id="">c) Changes the current directory
-                    <input type="radio" nam ="q2" value="Creates a new directory" id="">d) Creates a new directory
-
-                </div>
-
-                <div class="items">
-                    <h3>
-                        3. Which command is used to display the content of a text file in the terminal?
-                    </h3>
-                    <input type="radio" name="q3" value="cat" id="">a) cat
-                    <input type="radio" name="q3" value="view" id="">b) view
-                    <input type="radio" name="q3" value="open" id="">c) open
-                    <input type="radio" name="q3" value="edit" id="">d) edit
-                </div>
-
-
-
-                <div class="items">
-                    <h3>
-                        4. What command is used to delete a file in Linux?
-                    </h3>
-                    <input type="radio" name="q4" value="rm" id="">a) rm
-                    <input type="radio" name="q4" value="del" id="">b) del
-                    <input type="radio" name="q4" value="erase" id="">c) erase
-                    <input type="radio" name="q4" value="remove" id="">d) remove
-                </div>
-
-
-                <div class="items">
-                    <h3>
-                        5. Which command is used to create a new directory?
-                    </h3>
-                    <input type="radio" name="q5" value="mkdir" id="">a) mkdir
-                    <input type="radio" name="q5" value="mkdirs" id="">b) mkdirs
-                    <input type="radio" name="q5" value="create" id="">c) create
-                    <input type="radio" name="q5" value="newdir" id="">d) newdir
-                </div>
+                        <div class="options">
+                            <label>
+                                <input type="radio" name="q<?php echo $question['id']; ?>" value="A" id="q<?php echo $question['id']; ?>_a">
+                                a) <?php echo htmlspecialchars($question['option_a']); ?>
+                            </label>
+                            <label>
+                                <input type="radio" name="q<?php echo $question['id']; ?>" value="B" id="q<?php echo $question['id']; ?>_b">
+                                b) <?php echo htmlspecialchars($question['option_b']); ?>
+                            </label>
+                            <label>
+                                <input type="radio" name="q<?php echo $question['id']; ?>" value="C" id="q<?php echo $question['id']; ?>_c">
+                                c) <?php echo htmlspecialchars($question['option_c']); ?>
+                            </label>
+                            <label>
+                                <input type="radio" name="q<?php echo $question['id']; ?>" value="D" id="q<?php echo $question['id']; ?>_d">
+                                d) <?php echo htmlspecialchars($question['option_d']); ?>
+                            </label>
+                        </div>
+                    </div>
+                <?php } ?>
 
                 <input type="submit" value="Submit" class="btnSub">
-
-
             </section>
-
         </fieldset>
-
     </form>
-
 </body>
 
 </html>
 
 <script>
     function validateForm() {
-        // initialize end time 
+        // Initialize end time
         document.getElementById('end_time').value = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-
         // Check if each question has an answer
-        const questions = ["q1", "q2", "q3", "q4", "q5"];
+        const questions = <?php echo json_encode(array_column($questions, 'id')); ?>;
         for (let i = 0; i < questions.length; i++) {
             let selected = false;
-            const radios = document.getElementsByName(questions[i]);
+            const radios = document.getElementsByName('q' + questions[i]);
             for (let j = 0; j < radios.length; j++) {
                 if (radios[j].checked) {
                     selected = true;
